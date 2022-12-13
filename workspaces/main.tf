@@ -13,4 +13,29 @@
  *  GitHub <=> Terraform Cloud Workspace(s) <=> Azure Scope(s)
  */
 
- 
+data "azurerm_subscription" "current" {}
+
+## Root Organization & Workspace
+module "root" {
+  source = "./modules/root"
+
+  github_pat        = var.github_pat
+  organization_name = "navy-nickel"
+  subscription      = data.azurerm_subscription.current
+  tfe_token         = var.tfe_token
+
+  ado = {
+    token = var.azuredevops_pat
+    url   = var.azuredevops_url
+  }
+
+  aws = {
+    access_key_id     = var.aws_access_key_id
+    secret_access_key = var.aws_secret_access_key
+  }
+}
+
+# TODO
+# - Root Module - Bootstrap Terraform Cloud & Manage Azure Subscription
+# - Hybrid Module - Manage multiple RGs, Multiple Workspaces & Azure DevOps
+# - Basic Module - Manage one RG, One Workspace
